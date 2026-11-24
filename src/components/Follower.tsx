@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Pup from "./Pup";
+import PupWalker from "./PupWalker";
 
 /**
  * One Teddy for the whole site. Sections mark where he likes to sit with <PupSpot />.
@@ -47,6 +48,7 @@ export default function Follower() {
     let raf = 0;
     let last = 0;
     let idleSince = 0;
+    let lastStep = -1e9;
 
     const isMobile = () => window.innerWidth < 768;
     const onScreen = (r: DOMRect) => r.width > 0 && r.bottom > 70 && r.top < window.innerHeight;
@@ -149,11 +151,14 @@ export default function Follower() {
       const moved = Math.hypot(dx, dy);
       speed += (moved / Math.max(dt, 0.001) - speed) * 0.25;
       const walking = moved > 0.3 && speed > 40;
+      if (walking) lastStep = now;
+      // stay in the walking pose briefly after the last step so it doesn't flicker
+      const showWalk = !reduced && now - lastStep < 180;
       if (Math.abs(dx) > 0.8) {
         const left = dx < 0;
         if (left !== facingLeft) { facingLeft = left; body.style.scale = left ? "-1 1" : ""; }
       }
-      body.classList.toggle("pup-walk", walking && !reduced);
+      body.classList.toggle("is-walking", showWalk);
       if (walking && !reduced) {
         travelled += moved;
         if (travelled >= PRINT_EVERY) { travelled = 0; dropPrint(dx, dy); }
@@ -163,10 +168,10 @@ export default function Follower() {
       dog.style.width = `${pos.w}px`;
       dog.style.transform = `translate3d(${pos.x - scrollX}px, ${pos.y - scrollY}px, 0)`;
 
-      if (walking || !arrived) idleSince = now;
+      if (showWalk || !arrived) idleSince = now;
       // keep animating while moving; stop shortly after he settles (restarted by scroll/resize)
       if (now - idleSince < 250) raf = requestAnimationFrame(frame);
-      else { last = 0; body.classList.remove("pup-walk"); }
+      else { last = 0; body.classList.remove("is-walking"); }
     };
 
     const wake = () => {
@@ -195,8 +200,9 @@ export default function Follower() {
         className="pointer-events-none fixed left-0 top-0 z-30 opacity-0 transition-opacity duration-300 will-change-transform"
         style={{ width: 80 }}
       >
-        <div>
-          <Pup />
+        <div className="follower relative">
+          <Pup className="pose-sit" />
+          <PupWalker className="pose-walk" />
         </div>
       </div>
     </>

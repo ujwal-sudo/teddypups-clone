@@ -182,6 +182,28 @@ body {
 
 a, button, [role="button"], label, select { cursor: url(/cursor/paw-press.svg) 9 6, pointer; }
 .cursor-print { animation: tp-print-fade 1.5s ease-out forwards; }
+/* Follower: sits facing you when still, turns side-on and trots when moving */
+.follower .pose-sit, .follower .pose-walk { transition: opacity 0.14s ease; }
+.follower .pose-walk { position: absolute; left: -16%; bottom: -2%; width: 140%; opacity: 0; }
+.follower.is-walking .pose-sit { opacity: 0; }
+.follower.is-walking .pose-walk { opacity: 1; }
+
+.walker-leg, .walker-ear, .walker-tail, .walker-head { transform-box: fill-box; }
+.walker-leg { transform-origin: 50% 8%; }       /* swing from hip / shoulder */
+.walker-ear { transform-origin: 50% 5%; }
+.walker-tail { transform-origin: 100% 100%; }
+.walker-head { transform-origin: 20% 80%; }
+.is-walking .walker { animation: tp-trot-bob 0.22s ease-in-out infinite; }
+.is-walking .walker-leg.leg-a { animation: tp-leg 0.44s ease-in-out infinite; }
+.is-walking .walker-leg.leg-b { animation: tp-leg 0.44s ease-in-out -0.22s infinite; }
+.is-walking .walker-head { animation: tp-head-nod 0.44s ease-in-out infinite; }
+.is-walking .walker-ear { animation: tp-ear-flop 0.44s ease-in-out infinite; }
+.walker-tail { animation: tp-wag 0.5s ease-in-out infinite; }
+@keyframes tp-leg { 0%, 100% { transform: rotate(26deg); } 50% { transform: rotate(-26deg); } }
+@keyframes tp-trot-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4%); } }
+@keyframes tp-head-nod { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes tp-ear-flop { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(14deg); } }
+
 .paw-print {
   position: absolute;
   width: 16px;
