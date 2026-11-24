@@ -183,7 +183,12 @@ body {
 a, button, [role="button"], label, select { cursor: url(/cursor/paw-press.svg) 9 6, pointer; }
 .cursor-print { animation: tp-print-fade 1.5s ease-out forwards; }
 /* Follower: sits facing you when still, turns side-on and trots when moving */
-.follower .pose-sit, .follower .pose-walk { transition: opacity 0.14s ease; }
+.follower { height: 100%; }
+.follower .pose-sit, .follower .pose-peek { position: absolute; left: 0; bottom: 0; width: 100%; }
+.follower .pose-sit, .follower .pose-walk, .follower .pose-peek { transition: opacity 0.14s ease; }
+.follower .pose-peek { opacity: 0; }
+.follower.is-peek .pose-sit { opacity: 0; }
+.follower.is-peek .pose-peek { opacity: 1; }
 .follower .pose-walk { position: absolute; left: -16%; bottom: -2%; width: 140%; opacity: 0; }
 .follower.is-walking .pose-sit { opacity: 0; }
 .follower.is-walking .pose-walk { opacity: 1; }

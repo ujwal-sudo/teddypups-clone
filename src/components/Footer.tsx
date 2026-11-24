@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
-import Pup from "./Pup";
+import { PupSpot } from "./Follower";
 import Stars from "./Stars";
 import { Moon } from "./icons";
 
@@ -65,11 +65,12 @@ export default function Footer() {
   );
 }
 
-/** Teddy napping in a woven basket. */
+/** Teddy's basket: empty until he walks down the page and climbs in (see Follower). */
 function Basket({ className }: { className?: string }) {
   return (
     <div className={`relative ${className}`} aria-hidden>
-      <Pup pose="peek" className="relative z-0 mx-auto w-[62%] translate-y-[22%]" />
+      <PupSpot pose="peek" priority className="relative z-0 mx-auto w-[62%]" />
+      {/* the svg overlaps the spot by its rim height, so his paws rest on the rim */}
       <svg viewBox="0 0 140 60" className="relative z-10 -mt-2 w-full">
         <path d="M6 8h128l-12 46a8 8 0 0 1-8 6H26a8 8 0 0 1-8-6z" fill="#c98a4b" stroke="#fffdf8" strokeWidth="3" />
         <path d="M14 22h112M18 36h104M22 50h96" stroke="#8e5a2b" strokeWidth="3" />

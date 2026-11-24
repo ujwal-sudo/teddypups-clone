@@ -11,13 +11,16 @@ const DOOR_COLORS = ["#c2622b", "#5a3a28", "#d9853b", "#b4523a", "#8e3f15"];
 
 /**
  * Desktop: the section pins to the screen and vertical scrolling slides a row of doors
- * sideways while Teddy walks along the floor. Each door swings open as it comes into view.
- * Mobile: the same doors simply sit in a two-column grid.
+ * sideways while Teddy walks along the floor. Each door swings open when it reaches Teddy's
+ * nose (and closes again if you scroll back).
+ * Mobile: the same doors simply sit in a two-column grid and open as they scroll into view.
  */
 export default function MeetPups() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const spotRef = useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = useState(0); // px the track is wider than the screen (0 = not pinned)
+  const [reached, setReached] = useState(0); // how many doors Teddy has reached (desktop)
 
   useEffect(() => {
     const section = sectionRef.current!;
@@ -33,6 +36,12 @@ export default function MeetPups() {
         const max = section.offsetHeight - window.innerHeight;
         const p = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / Math.max(1, max)));
         track.style.transform = `translate3d(${-p * (track.scrollWidth - window.innerWidth)}px,0,0)`;
+        // a door opens once its left edge slides up to Teddy's nose
+        const nose = spotRef.current?.getBoundingClientRect().right ?? 0;
+        const doors = track.querySelectorAll(".door-wrap");
+        let n = 0;
+        doors.forEach((d) => { if (d.getBoundingClientRect().left < nose + 8) n++; });
+        setReached(n);
       });
     };
 
@@ -69,10 +78,10 @@ export default function MeetPups() {
         <div className="relative mt-10 flex-1 md:mt-0 md:flex md:flex-col md:justify-end">
           <div
             ref={trackRef}
-            className="gutter grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 md:flex md:w-max md:max-w-none md:gap-12 md:pl-[30vw] md:pr-[12vw] md:will-change-transform"
+            className="gutter grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 md:flex md:w-max md:max-w-none md:items-end md:gap-12 md:pl-[30vw] md:pr-[58vw] md:will-change-transform"
           >
             {available.map((p, i) => (
-              <Door key={p.slug} pup={p} color={DOOR_COLORS[i % DOOR_COLORS.length]} />
+              <Door key={p.slug} pup={p} color={DOOR_COLORS[i % DOOR_COLORS.length]} reached={overflow ? i < reached : null} />
             ))}
             <Link href="/puppies" className="group flex flex-col justify-end md:w-[min(190px,25vh)]">
               <span className="door-arch flex aspect-[19/24] items-center justify-center border-[3px] border-dashed border-cocoa text-center transition-colors group-hover:bg-milk/60">
@@ -81,7 +90,9 @@ export default function MeetPups() {
             </Link>
           </div>
           <div className="floor relative mt-0 hidden h-16 md:block">
-            <PupSpot className="absolute -top-[108px] left-[8vw] w-[86px]" />
+            <div ref={spotRef} className="absolute -top-[108px] left-[8vw] w-[86px]">
+              <PupSpot />
+            </div>
           </div>
         </div>
       </div>
@@ -89,10 +100,10 @@ export default function MeetPups() {
   );
 }
 
-function Door({ pup, color }: { pup: Puppy; color: string }) {
-  // Opens once the door has slid past the right quarter of the screen.
-  // (threshold is low enough that right-column doors on phones still open)
-  const [ref, open] = useInView<HTMLAnchorElement>(0.35, true, "0px -25% 0px 0px");
+/** `reached` is set on desktop (Teddy decides); null on phones, where the door opens on view. */
+function Door({ pup, color, reached }: { pup: Puppy; color: string; reached: boolean | null }) {
+  const [ref, inView] = useInView<HTMLAnchorElement>(0.35);
+  const open = reached ?? inView;
   return (
     <Link ref={ref} href={`/puppies/${pup.slug}`} className={`door-wrap group flex flex-col md:w-[min(190px,25vh)] ${open ? "is-open" : ""}`}>
       <span className="mb-3 block min-h-[4.6rem] text-center">

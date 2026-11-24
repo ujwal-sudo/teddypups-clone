@@ -14,9 +14,19 @@ import PupWalker from "./PupWalker";
  *  - Once he arrives he is pinned exactly to the spot, so he scrolls with the page
  *    (and stays on the floor of the pinned "doors" section).
  *  - Legs move and paw prints are dropped only while he is actually moving across the page.
+ *  - A `priority` spot (the footer basket) wins as soon as it is fully on screen; a `peek`
+ *    spot shows him peeking out (head and paws over the rim) instead of sitting.
  */
-export function PupSpot({ className = "" }: { className?: string }) {
-  return <span data-pup-spot aria-hidden className={`pointer-events-none block aspect-[104/134] ${className}`} />;
+export function PupSpot({ className = "", pose = "sit", priority }: { className?: string; pose?: "sit" | "peek"; priority?: boolean }) {
+  return (
+    <span
+      data-pup-spot
+      data-pose={pose}
+      data-priority={priority ? "" : undefined}
+      aria-hidden
+      className={`pointer-events-none block ${pose === "peek" ? "aspect-[88/92]" : "aspect-[104/134]"} ${className}`}
+    />
+  );
 }
 
 const STIFFNESS = 55; // spring strength
@@ -24,7 +34,7 @@ const DAMPING = 2 * Math.sqrt(STIFFNESS); // critically damped: no overshoot or 
 const MAX_SPEED = 750; // px/s — a brisk trot, not a teleport
 const PRINT_EVERY = 34; // px travelled between paw prints
 
-type Box = { x: number; y: number; w: number };
+type Box = { x: number; y: number; w: number; h: number };
 
 export default function Follower() {
   const dogRef = useRef<HTMLDivElement>(null);
@@ -39,7 +49,7 @@ export default function Follower() {
     let spot: Element | null = null;
     let arrived = false;
     let shown = false;
-    const pos: Box = { x: 0, y: 0, w: 80 }; // page coordinates of the dog's top-left
+    const pos: Box = { x: 0, y: 0, w: 80, h: 103 }; // page coordinates of the dog's box
     const vel = { x: 0, y: 0 };
     let speed = 0; // smoothed page-space speed (px/s)
     let facingLeft = false;
@@ -54,6 +64,10 @@ export default function Follower() {
     const onScreen = (r: DOMRect) => r.width > 0 && r.bottom > 70 && r.top < window.innerHeight;
 
     const pickSpot = () => {
+      for (const el of document.querySelectorAll("[data-pup-spot][data-priority]")) {
+        const r = el.getBoundingClientRect();
+        if (r.width && r.top >= 70 && r.bottom <= window.innerHeight) return el; // e.g. the basket
+      }
       if (spot?.isConnected && onScreen(spot.getBoundingClientRect())) return spot; // stay put while visible
       const mid = window.innerHeight / 2;
       let best: Element | null = null;
@@ -70,16 +84,16 @@ export default function Follower() {
     };
 
     // Keep a viewport y (top of the dog) inside the visible screen, below the header.
-    const clampY = (y: number, w: number) => {
+    const clampY = (y: number, h: number) => {
       const minY = 78;
-      const maxY = window.innerHeight - (w * 134) / 104 - (isMobile() ? 84 : 14);
+      const maxY = window.innerHeight - h - (isMobile() ? 84 : 14);
       return Math.min(Math.max(y, minY), Math.max(minY, maxY));
     };
 
     // Where he should stand: on the spot, but never outside the visible screen.
     const targetFor = (el: Element): Box => {
       const r = el.getBoundingClientRect();
-      return { x: r.left + scrollX, y: clampY(r.top, r.width) + scrollY, w: r.width };
+      return { x: r.left + scrollX, y: clampY(r.top, r.height) + scrollY, w: r.width, h: r.height };
     };
 
     const dropPrint = (dx: number, dy: number) => {
@@ -89,7 +103,7 @@ export default function Follower() {
       const el = document.createElement("span");
       el.className = "paw-print";
       el.style.left = `${pos.x + pos.w / 2 + nx * 7 * stepSide - 8}px`;
-      el.style.top = `${pos.y + (pos.w * 134) / 104 - 10 + ny * 7 * stepSide}px`;
+      el.style.top = `${pos.y + pos.h - 10 + ny * 7 * stepSide}px`;
       el.style.rotate = `${(Math.atan2(dy, dx) * 180) / Math.PI + 90}deg`;
       el.addEventListener("animationend", () => el.remove());
       prints.appendChild(el);
@@ -135,10 +149,11 @@ export default function Follower() {
         pos.x += vel.x * dt;
         pos.y += vel.y * dt;
         pos.w += (t.w - pos.w) * Math.min(1, dt * 6);
+        pos.h += (t.h - pos.h) * Math.min(1, dt * 6);
         // Fast scrolling can outrun his trot: then the screen edge drags him along instead
         // of letting him fall off-screen.
         const vy = pos.y - scrollY;
-        const cy = clampY(vy, pos.w);
+        const cy = clampY(vy, pos.h);
         if (cy !== vy) {
           pos.y += cy - vy;
           vel.y = 0;
@@ -159,6 +174,7 @@ export default function Follower() {
         if (left !== facingLeft) { facingLeft = left; body.style.scale = left ? "-1 1" : ""; }
       }
       body.classList.toggle("is-walking", showWalk);
+      body.classList.toggle("is-peek", !showWalk && arrived && (spot as HTMLElement).dataset.pose === "peek");
       if (walking && !reduced) {
         travelled += moved;
         if (travelled >= PRINT_EVERY) { travelled = 0; dropPrint(dx, dy); }
@@ -166,6 +182,7 @@ export default function Follower() {
 
       // render in viewport space
       dog.style.width = `${pos.w}px`;
+      dog.style.height = `${pos.h}px`;
       dog.style.transform = `translate3d(${pos.x - scrollX}px, ${pos.y - scrollY}px, 0)`;
 
       if (showWalk || !arrived) idleSince = now;
@@ -202,6 +219,7 @@ export default function Follower() {
       >
         <div className="follower relative">
           <Pup className="pose-sit" />
+          <Pup pose="peek" className="pose-peek" />
           <PupWalker className="pose-walk" />
         </div>
       </div>
