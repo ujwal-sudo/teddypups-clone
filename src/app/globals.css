@@ -45,6 +45,8 @@ html {
 }
 /* Lenis drives the smoothing itself; native smooth scrolling would fight it */
 html.lenis, html.lenis body { height: auto; }
+/* clip on html too: otherwise body's clip is handed to the viewport, and mid-animation overflow widens the page on phones */
+html { overflow-x: clip; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-stopped { overflow: hidden; }
