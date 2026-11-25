@@ -9,7 +9,7 @@ import { lenis } from "./SmoothScroll";
 /**
  * One Teddy for the whole site. Sections mark where he likes to sit with <PupSpot />.
  *
- * How he moves (all in page coordinates, so he never "floats" against the content):
+ * How he moves (he walks in screen space, so scrolling never shoves him around mid-walk):
  *  - He keeps his current spot for as long as any of it is on screen.
  *  - When that spot scrolls away he stays at the screen edge, trotting along, until a
  *    new spot comes into view; then he walks there (spring physics, capped speed).
@@ -59,7 +59,10 @@ export default function Follower() {
     let spot: Element | null = null;
     let arrived = false;
     let shown = false;
-    const pos: Box = { x: 0, y: 0, w: 80, h: 103 }; // page coordinates of the dog's box
+    const pos: Box = { x: 0, y: 0, w: 80, h: 103 }; // screen (viewport) coordinates of the dog's box
+    let lastScroll = scrollY;
+    let scrollDir = 0; // direction of the latest scroll step, and when it happened
+    let scrollAt = -1e9;
     const vel = { x: 0, y: 0 };
     let speed = 0; // smoothed page-space speed (px/s)
     let facingLeft = false;
@@ -105,7 +108,7 @@ export default function Follower() {
     // Where he should stand: on the spot, but never outside the visible screen.
     const targetFor = (el: Element): Box => {
       const r = el.getBoundingClientRect();
-      return { x: r.left + scrollX, y: clampY(r.top, r.height) + scrollY, w: r.width, h: r.height };
+      return { x: r.left, y: clampY(r.top, r.height), w: r.width, h: r.height };
     };
 
     const dropPrint = (dx: number, dy: number) => {
@@ -114,8 +117,8 @@ export default function Follower() {
       stepSide = -stepSide;
       const el = document.createElement("span");
       el.className = "paw-print";
-      el.style.left = `${pos.x + pos.w / 2 + nx * 7 * stepSide - 8}px`;
-      el.style.top = `${pos.y + pos.h - 10 + ny * 7 * stepSide}px`;
+      el.style.left = `${pos.x + scrollX + pos.w / 2 + nx * 7 * stepSide - 8}px`;
+      el.style.top = `${pos.y + scrollY + pos.h - 10 + ny * 7 * stepSide}px`;
       el.style.rotate = `${(Math.atan2(dy, dx) * 180) / Math.PI + 90}deg`;
       el.addEventListener("animationend", () => el.remove());
       prints.appendChild(el);
@@ -140,6 +143,13 @@ export default function Follower() {
 
       const t = targetFor(spot);
       const prev = { x: pos.x, y: pos.y };
+      const scrolled = scrollY - lastScroll;
+      lastScroll = scrollY;
+      if (Math.abs(scrolled) > 0.5) { scrollDir = Math.sign(scrolled); scrollAt = now; }
+      // He's stepped both from his own frame loop and right after each Lenis scroll, so one call
+      // can see no scroll mid-flick: remember the direction briefly.
+      const scrolling = now - scrollAt < 120 ? scrollDir : 0;
+      let treadmill = false; // trotting on the spot while the page scrolls under him
 
       if (!shown) {
         // appear right on the spot (fade in), no long walk from nowhere
@@ -149,42 +159,48 @@ export default function Follower() {
         shown = true;
         dog.style.opacity = "1";
       } else if (arrived || reduced) {
-        Object.assign(pos, t); // pinned to the spot (or to the screen edge)
+        // Pinned to the spot: he rides along with the page. If the spot stays put on screen
+        // while the page scrolls (the pinned doors floor, or the screen edge while he follows
+        // you), he trots on the spot instead.
+        treadmill = arrived && Math.abs(scrolled) > 0.5 && Math.hypot(t.x - prev.x, t.y - prev.y) < 0.5;
+        Object.assign(pos, t);
+        prev.x = pos.x; prev.y = pos.y; // being carried by the page is not walking
       } else {
-        // critically damped spring towards the target, with a speed cap
+        // Walking to a spot, in screen space: scrolling never shoves him around, so what you
+        // see is only his own (critically damped, speed-capped) trot.
         const ax = STIFFNESS * (t.x - pos.x) - DAMPING * vel.x;
         const ay = STIFFNESS * (t.y - pos.y) - DAMPING * vel.y;
         vel.x += ax * dt;
         vel.y += ay * dt;
         const v = Math.hypot(vel.x, vel.y);
         if (v > MAX_SPEED) { vel.x *= MAX_SPEED / v; vel.y *= MAX_SPEED / v; }
+        // Never walk against the scroll: if the page carries his spot past him while you're still
+        // scrolling, he trots on the spot (facing forward) and catches up once you stop.
+        if ((scrolling > 0 && vel.y < 0) || (scrolling < 0 && vel.y > 0)) {
+          vel.y = 0;
+          treadmill = true;
+        }
         pos.x += vel.x * dt;
         pos.y += vel.y * dt;
         pos.w += (t.w - pos.w) * Math.min(1, dt * 6);
         pos.h += (t.h - pos.h) * Math.min(1, dt * 6);
-        // Fast scrolling can outrun his trot: then the screen edge drags him along instead
-        // of letting him fall off-screen.
-        const vy = pos.y - scrollY;
-        const cy = clampY(vy, pos.h);
-        if (cy !== vy) {
-          pos.y += cy - vy;
-          vel.y = 0;
-        }
         if (Math.hypot(t.x - pos.x, t.y - pos.y) < 1.5 && Math.hypot(vel.x, vel.y) < 25) arrived = true;
       }
 
-      // movement across the page drives legs, facing and paw prints
+      // his own movement on screen drives legs, facing and paw prints
       const dx = pos.x - prev.x, dy = pos.y - prev.y;
       const moved = Math.hypot(dx, dy);
       speed += (moved / Math.max(dt, 0.001) - speed) * 0.25;
-      const walking = moved > 0.3 && speed > 40;
+      const walking = (moved > 0.3 && speed > 40) || treadmill;
       if (walking) lastStep = now;
       // stay in the walking pose briefly after the last step so it doesn't flicker
-      const showWalk = !reduced && now - lastStep < 180;
-      // Face left only when he's clearly heading left. Moving mostly down the page (following
-      // the scroll, or trotting on the pinned doors floor) he faces forward, towards the doors.
-      if (moved > 0.3) {
-        const left = dx < -0.8 && -dx > Math.abs(dy) * 0.35;
+      // ...but never while the page is carrying him: that reads as walking backwards
+      const carried = arrived && !treadmill && scrolling !== 0;
+      const showWalk = !reduced && (walking || (!carried && now - lastStep < 180));
+      // Face the way he's going on screen; going straight up/down (or trotting on the spot) he
+      // faces forward, to the right, towards the doors.
+      if (walking) {
+        const left = dx < -0.4;
         if (left !== facingLeft) { facingLeft = left; body.style.scale = left ? "-1 1" : ""; }
       }
       body.classList.toggle("is-walking", showWalk);
@@ -197,15 +213,17 @@ export default function Follower() {
       }
       body.classList.toggle("is-peek", peek);
       if (walking && !reduced) {
-        travelled += moved;
-        if (travelled >= PRINT_EVERY) { travelled = 0; dropPrint(dx, dy); }
+        // prints go down in the page, so count the page distance he covered
+        const px = dx, py = dy + (treadmill ? scrolled : 0);
+        travelled += Math.hypot(px, py);
+        if (travelled >= PRINT_EVERY) { travelled = 0; dropPrint(px, py); }
       }
 
       // Render in page space (he's absolutely positioned in the document), so while he sits on a
-      // spot the browser scrolls him with the content: no lag or jump on fast scrolls.
+      // spot the browser scrolls him with the content: no lag behind fast scrolls.
       dog.style.width = `${pos.w}px`;
       dog.style.height = `${pos.h}px`;
-      dog.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+      dog.style.transform = `translate3d(${pos.x + scrollX}px, ${pos.y + scrollY}px, 0)`;
 
       if (showWalk || !arrived) idleSince = now;
       // keep animating while moving; stop shortly after he settles (restarted by scroll/resize)
