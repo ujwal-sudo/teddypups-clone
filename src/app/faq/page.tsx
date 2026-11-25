@@ -15,14 +15,16 @@ export default function FaqPage() {
     mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
   };
   return (
-    <section className="bg-gradient-to-b from-toffee-ink to-[#5e2e15] pb-24 pt-28 text-milk md:pt-36">
+    <section className="tp-faqroom" aria-labelledby="faq-title">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <div className="gutter">
-        <h1 className="display text-giant">Questions &amp; answers</h1>
-        <p className="mt-4 max-w-2xl text-lede text-milk/80">
-          Can&apos;t find what you&apos;re looking for? Message us on WhatsApp — our team is available 24/7.
-        </p>
-        <div className="mt-12"><FaqBoard /></div>
+      <div className="gutter relative pb-24 pt-28 md:pt-36">
+        <header className="max-w-4xl">
+          <h1 id="faq-title" className="display text-giant">Questions &amp; answers</h1>
+          <p className="mt-6 max-w-[52ch] text-lede text-milk/80">
+            Can&apos;t find what you&apos;re looking for? Message us on WhatsApp — our team is available 24/7.
+          </p>
+        </header>
+        <div className="mt-12 md:mt-16"><FaqBoard /></div>
       </div>
     </section>
   );
