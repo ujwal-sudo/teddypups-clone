@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Reveal from "@/components/Reveal";
 import { PupSpot } from "@/components/Follower";
 import { TESTIMONIAL } from "@/components/home/Families";
 import { families } from "@/lib/site";
@@ -22,10 +21,10 @@ export default function HappyFamiliesPage() {
         <div className="grid items-end gap-10 md:grid-cols-[1fr_minmax(0,440px)]">
           <div>
             <p className="hand text-toffee-ink">our wall of happy endings</p>
-            <h1 className="display mt-2 max-w-[8ch] text-[clamp(3rem,9vw,5.6rem)]">
+            <h1 className="display mt-2 max-w-[8ch] text-giant">
               Happy families <span className="hand align-middle text-[0.45em] text-toffee">♡</span>
             </h1>
-            <p className="mt-5 max-w-md text-cocoa-soft">
+            <p className="mt-5 max-w-xl text-lede text-cocoa-soft">
               Nothing makes us happier than seeing our puppies in loving homes! Here are some beautiful moments shared by our amazing clients after welcoming their furry friends.
             </p>
             <p className="hand mt-4 text-toffee-deep">{families.length} moments and counting</p>
@@ -38,10 +37,11 @@ export default function HappyFamiliesPage() {
         </div>
 
         {/* masonry wall of polaroids */}
-        <ul className="mt-16 columns-2 gap-5 md:columns-3 md:gap-8 lg:columns-4">
+        <ul className="mt-16 columns-2 gap-[clamp(1rem,3vw,2.6rem)] md:columns-3 lg:columns-4">
           {families.map((f, i) => (
-            <Reveal as="li" key={f.src} delay={(i % 4) * 70} className="mb-7 break-inside-avoid md:mb-10">
+            <li key={f.src} data-reveal className="wall-item mb-7 break-inside-avoid md:mb-10" style={{ "--d": `${(i % 4) * 0.09}s` } as React.CSSProperties}>
               <figure className="polaroid relative" style={{ transform: `rotate(${TILTS[i % TILTS.length]}deg)` }}>
+                <span className="wall-paw" />
                 <span className="washi" />
                 <Image
                   src={f.src}
@@ -53,7 +53,7 @@ export default function HappyFamiliesPage() {
                 />
                 {f.caption && <figcaption className="hand mt-1.5 text-center text-[0.8rem]">{f.caption}</figcaption>}
               </figure>
-            </Reveal>
+            </li>
           ))}
         </ul>
 

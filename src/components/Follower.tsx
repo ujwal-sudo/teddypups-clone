@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import Pup from "./Pup";
 import PupWalker from "./PupWalker";
@@ -15,7 +16,10 @@ import PupWalker from "./PupWalker";
  *    (and stays on the floor of the pinned "doors" section).
  *  - Legs move and paw prints are dropped only while he is actually moving across the page.
  *  - A `priority` spot (the footer basket) wins as soon as it is fully on screen; a `peek`
- *    spot shows him peeking out (head and paws over the rim) instead of sitting.
+ *    spot shows him peeking out (head and paws over the rim) instead of sitting, and he hops
+ *    up into it from behind the rim.
+ *  - He only follows you on the home page (starting from the hero quilt). On other pages he
+ *    just turns up in the footer basket at the end.
  */
 export function PupSpot({ className = "", pose = "sit", priority }: { className?: string; pose?: "sit" | "peek"; priority?: boolean }) {
   return (
@@ -39,6 +43,11 @@ type Box = { x: number; y: number; w: number; h: number };
 export default function Follower() {
   const dogRef = useRef<HTMLDivElement>(null);
   const printsRef = useRef<HTMLDivElement>(null);
+  const path = usePathname();
+  const pathRef = useRef(path);
+  useEffect(() => {
+    pathRef.current = path;
+  }, [path]);
 
   useEffect(() => {
     const dog = dogRef.current!;
@@ -64,10 +73,12 @@ export default function Follower() {
     const onScreen = (r: DOMRect) => r.width > 0 && r.bottom > 70 && r.top < window.innerHeight;
 
     const pickSpot = () => {
+      const home = pathRef.current === "/";
       for (const el of document.querySelectorAll("[data-pup-spot][data-priority]")) {
         const r = el.getBoundingClientRect();
         if (r.width && r.top >= 70 && r.bottom <= window.innerHeight) return el; // e.g. the basket
       }
+      if (!home) return null; // off the home page he only lives in the basket
       if (spot?.isConnected && onScreen(spot.getBoundingClientRect())) return spot; // stay put while visible
       const mid = window.innerHeight / 2;
       let best: Element | null = null;
@@ -174,7 +185,14 @@ export default function Follower() {
         if (left !== facingLeft) { facingLeft = left; body.style.scale = left ? "-1 1" : ""; }
       }
       body.classList.toggle("is-walking", showWalk);
-      body.classList.toggle("is-peek", !showWalk && arrived && (spot as HTMLElement).dataset.pose === "peek");
+      const peek = !showWalk && arrived && (spot as HTMLElement).dataset.pose === "peek";
+      if (peek && !body.classList.contains("is-peek") && !reduced) {
+        // hop up from behind the rim (quilt / basket)
+        body.classList.remove("hop");
+        void body.offsetWidth;
+        body.classList.add("hop");
+      }
+      body.classList.toggle("is-peek", peek);
       if (walking && !reduced) {
         travelled += moved;
         if (travelled >= PRINT_EVERY) { travelled = 0; dropPrint(dx, dy); }

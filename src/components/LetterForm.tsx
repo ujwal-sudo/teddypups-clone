@@ -29,22 +29,22 @@ export default function LetterForm() {
 
   const blank = "mx-1 inline-block border-0 border-b-2 border-dashed border-cocoa/50 bg-transparent px-1 py-0.5 font-hand text-toffee-deep outline-none placeholder:text-cocoa/35 focus:border-toffee aria-[invalid=true]:border-solid aria-[invalid=true]:border-toffee-deep";
   return (
-    <form key={JSON.stringify(v ?? null)} action={action} className="letter relative p-6 leading-[2.6] md:p-10" noValidate>
+    <form key={JSON.stringify(v ?? null)} action={action} className="letter relative p-6 text-[clamp(1.05rem,1.5vw,1.2rem)] leading-[2.6] md:p-12" noValidate>
       <span className="absolute -top-4 right-6 grid h-16 w-14 rotate-6 place-items-center border-2 border-dashed border-cocoa bg-honey" aria-hidden>
         <PawIcon className="h-6 w-6 text-cocoa" />
       </span>
-      <p className="hand text-2xl text-toffee-deep">Dear TeddyPups,</p>
+      <p className="hand text-[clamp(1.4rem,2.4vw,1.75rem)] text-toffee-deep">Dear TeddyPups,</p>
       <p className="mt-3">
         my name is
-        <input name="name" defaultValue={v?.name} aria-label="Your name" aria-invalid={!!err.name} required autoComplete="name" placeholder="your name" className={`${blank} w-40`} />,
+        <input name="name" defaultValue={v?.name} aria-label="Your name" aria-invalid={!!err.name} required autoComplete="name" placeholder="your name" className={`${blank} w-[clamp(10rem,13vw,15.5rem)]`} />,
         and you can reach me on
-        <input name="phone" defaultValue={v?.phone} type="tel" aria-label="Phone or WhatsApp" aria-invalid={!!err.phone} required autoComplete="tel" placeholder="+971 50 123 4567" className={`${blank} w-44`} />
+        <input name="phone" defaultValue={v?.phone} type="tel" aria-label="Phone or WhatsApp" aria-invalid={!!err.phone} required autoComplete="tel" placeholder="+971 50 123 4567" className={`${blank} w-[clamp(11rem,14vw,16rem)]`} />
         or by email at
-        <input name="email" defaultValue={v?.email} type="email" aria-label="Email (optional)" aria-invalid={!!err.email} autoComplete="email" placeholder="optional" className={`${blank} w-48`} />.
+        <input name="email" defaultValue={v?.email} type="email" aria-label="Email (optional)" aria-invalid={!!err.email} autoComplete="email" placeholder="optional" className={`${blank} w-[clamp(12rem,15vw,17rem)]`} />.
       </p>
       <p>
         I live in
-        <input name="area" defaultValue={v?.area} aria-label="Your area (optional)" autoComplete="address-level2" placeholder="e.g. Dubai Marina" className={`${blank} w-40`} />,
+        <input name="area" defaultValue={v?.area} aria-label="Your area (optional)" autoComplete="address-level2" placeholder="e.g. Dubai Marina" className={`${blank} w-[clamp(10rem,13vw,15.5rem)]`} />,
         and I&apos;m curious about
         <select name="puppy" defaultValue={v?.puppy ?? ""} aria-label="Puppy you're interested in (optional)" className={`${blank} max-w-[15rem] cursor-pointer`}>
           <option value="">any puppy (not sure yet)</option>

@@ -19,8 +19,8 @@ export default function Families() {
     <section className="relative overflow-hidden bg-gradient-to-b from-[#d9853b] via-[#8a4520] to-[#5e2e15] pb-24 pt-20 text-milk md:pt-24">
       <div className="gutter grid items-start gap-10 md:grid-cols-[1fr_minmax(0,460px)]">
         <Reveal>
-          <h2 className="display max-w-[10ch] text-[clamp(2.4rem,6vw,4.2rem)]">Happy families &amp; puppies</h2>
-          <p className="mt-5 max-w-md text-milk/85">
+          <h2 className="display max-w-[10ch] text-huge">Happy families &amp; puppies</h2>
+          <p className="mt-5 max-w-xl text-lede text-milk/85">
             We are truly honored to see our puppies become cherished members of loving families. These heartwarming moments have
             been shared by our valued clients who welcomed a Teddy Pup into their homes and hearts.
           </p>
@@ -28,7 +28,7 @@ export default function Families() {
         <Reveal delay={150}>
           <figure className="relative rotate-[1.5deg] rounded-sm bg-milk p-6 text-cocoa shadow-[8px_10px_0_-2px_rgb(42_23_14/0.6)]">
             <span className="washi" />
-            <blockquote className="font-display text-[1.02rem] leading-relaxed">“{TESTIMONIAL.quote}”</blockquote>
+            <blockquote className="font-display text-[clamp(1.02rem,1.25vw,1.2rem)] leading-relaxed">“{TESTIMONIAL.quote}”</blockquote>
             <figcaption className="hand mt-3 text-toffee-deep">{TESTIMONIAL.by}</figcaption>
           </figure>
         </Reveal>
@@ -38,7 +38,7 @@ export default function Families() {
         <div className="cork relative rounded-xl border-[6px] border-[#3d1e0d] px-4 pb-10 pt-10 shadow-[inset_0_0_30px_rgb(0_0_0/0.35)] md:px-10">
           <ul className="grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 lg:grid-cols-4">
             {shown.map((f, i) => (
-              <li key={f.src}>
+              <li key={f.src} data-reveal className="photowall-item" style={{ "--d": `${(i % 4) * 0.1}s` } as React.CSSProperties}>
                 <figure className="polaroid relative" style={{ transform: `rotate(${TILTS[i]}deg)` }}>
                   <span className="washi" />
                   <span className="relative block aspect-[4/5] overflow-hidden">

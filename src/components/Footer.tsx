@@ -26,7 +26,7 @@ export default function Footer() {
           <p className="mt-4 max-w-sm text-milk/80">
             {SITE.name} is a Dubai-based brand specializing in miniature puppies, offering premium services and worldwide shipping.
           </p>
-          <Basket className="mt-6 w-36" />
+          <Basket className="mt-6 w-[clamp(9rem,16vw,19rem)]" />
         </div>
         <div>
           <h3 className="hand text-honey">Explore</h3>

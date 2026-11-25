@@ -13,11 +13,11 @@ export default function Passport() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-honey to-[#d9853b] pt-16 md:pt-24">
       <div className="gutter">
-        <Reveal plain className="relative mx-auto max-w-5xl rounded-[1.4rem] border-[3px] border-cocoa bg-toffee-ink p-2.5 shadow-[0_14px_0_-4px_var(--color-cocoa)] md:p-3.5">
+        <Reveal plain className="relative mx-auto max-w-[72rem] rounded-[1.4rem] border-[3px] border-cocoa bg-toffee-ink p-2.5 shadow-[0_14px_0_-4px_var(--color-cocoa)] md:p-3.5">
           <div className="grid overflow-hidden rounded-xl border-2 border-cocoa md:grid-cols-2">
             <div className="paper relative px-6 pb-8 pt-7 md:border-r-2 md:border-dashed md:border-cocoa/30 md:px-10">
               <p className="hand text-sm text-toffee-ink">puppy passport</p>
-              <h2 className="display mt-1 text-[clamp(2rem,4.5vw,3rem)]">Why families trust TeddyPups</h2>
+              <h2 className="display mt-1 text-[clamp(2.2rem,4.2vw,3.9rem)]">Why families trust TeddyPups</h2>
               <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8">
                 {STAMPS.slice(0, 2).map((s, i) => <Stamp key={s.label} {...s} delay={i * 180} />)}
               </div>
@@ -35,7 +35,7 @@ export default function Passport() {
         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="absolute bottom-0 h-[110px] w-full text-[#8a4520]" aria-hidden>
           <path fill="currentColor" d="M0 120V80h40V60h30v20h20V40h25v40h30V70h40v50h20V50h18V30h6V10h4v20h6v20h18v70h30V64h40v56h30V44h30v76h25V70h45V40h20v80h30V58h28v62h40V30l10-14 10 14v90h30V66h44v54h20V48h36v72h28V76h40v44h20V54h30v66h40V70h30v50h46V60h20v60h40V36h30v84h30V72h40v48h28V58h40v62z" />
         </svg>
-        <PupSpot className="absolute bottom-3 left-[14%] w-[70px] md:w-[86px]" />
+        <PupSpot className="absolute bottom-3 left-[14%] w-[clamp(70px,7vw,130px)]" />
       </div>
     </section>
   );
@@ -47,15 +47,15 @@ export function Stamp({ label, text, shape, color, r, icon, delay }: StampProps)
   return (
     <div className="flex flex-col items-center text-center">
       <span
-        className={`stamp grid h-[104px] w-[104px] place-items-center border-[3px] border-double p-2 ${shape}`}
+        className={`stamp grid size-[clamp(104px,10vw,192px)] place-items-center border-[3px] border-double p-2 ${shape}`}
         style={{ color, borderColor: color, "--r": r, animationDelay: `${delay}ms` } as React.CSSProperties}
       >
-        <span className="display text-[0.82rem] leading-tight">
-          <span className="block text-lg" aria-hidden>{icon}</span>
+        <span className="display text-[clamp(0.82rem,1.05vw,1.25rem)] leading-tight">
+          <span className="block text-[1.6em]" aria-hidden>{icon}</span>
           {label}
         </span>
       </span>
-      <p className="mt-3 text-[0.85rem] leading-snug text-cocoa-soft">{text}</p>
+      <p className="mt-3 text-[clamp(0.85rem,0.95vw,1rem)] leading-snug text-cocoa-soft">{text}</p>
     </div>
   );
 }

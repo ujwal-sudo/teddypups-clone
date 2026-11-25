@@ -16,10 +16,10 @@ export default function GoneHomePage() {
       <div className="gutter">
         <div className="flex flex-col items-start justify-between gap-10 md:flex-row md:items-end">
           <div>
-            <h1 className="display text-[clamp(3rem,9vw,5.6rem)]">
+            <h1 className="display text-giant">
               Gone home <span className="hand align-middle text-[0.45em] text-toffee">♡</span>
             </h1>
-            <p className="mt-5 max-w-xl text-cocoa-soft">
+            <p className="mt-5 max-w-2xl text-lede text-cocoa-soft">
               Every puppy here has already joined a loving family. Looking for one just like them? Tell us — we&apos;ll help you find your match.
             </p>
             <Link href="/puppies" className="btn btn-primary mt-7">See available puppies</Link>

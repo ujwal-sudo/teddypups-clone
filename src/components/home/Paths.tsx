@@ -11,16 +11,16 @@ export default function Paths() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-honey-soft to-[#f8d295] pb-20 pt-24 md:pt-28">
       <div className="gutter">
-        <h2 className="display mx-auto max-w-[12ch] text-center text-[clamp(2.4rem,6vw,4.2rem)]">Two ways to meet your puppy</h2>
+        <h2 className="display mx-auto max-w-[12ch] text-center text-huge">Two ways to meet your puppy</h2>
 
         <div className="relative mt-10 grid gap-14 md:grid-cols-2 md:gap-24">
           {/* Signpost (desktop: sits between the two columns) */}
-          <Signpost className="absolute left-1/2 top-0 hidden h-full w-[360px] -translate-x-1/2 md:block" />
+          <Signpost className="absolute left-1/2 top-0 hidden h-full w-[clamp(360px,30vw,560px)] -translate-x-1/2 md:block" />
 
           <Reveal className="relative flex flex-col items-center text-center md:items-start md:pr-10 md:pt-24 md:text-left">
             <h3 className="hand mb-6 rounded-md border-2 border-cocoa bg-toffee px-4 py-1 text-milk md:hidden">Puppies in Dubai</h3>
             <Showroom />
-            <p className="mt-8 max-w-sm text-cocoa-soft">
+            <p className="mt-8 max-w-md text-cocoa-soft">
               See them, love them, take them home. Come meet our locally available puppies before you decide.
             </p>
             <Link href="/puppies?origin=local" className="btn btn-primary mt-6">Meet local puppies</Link>
@@ -29,14 +29,14 @@ export default function Paths() {
           <Reveal delay={150} className="relative flex flex-col items-center text-center md:items-end md:pl-10 md:pt-24 md:text-right">
             <h3 className="hand mb-6 rounded-md border-2 border-cocoa bg-toffee px-4 py-1 text-milk md:hidden">Imported for you</h3>
             <FlightPath />
-            <p className="mt-8 max-w-sm text-cocoa-soft">
+            <p className="mt-8 max-w-md text-cocoa-soft">
               Exclusive Korean teacup puppies, delivered. Order from the world&apos;s most reputable breeders and let us handle the import.
             </p>
             <Link href="/puppies?origin=imported" className="btn btn-primary mt-6">See imported puppies</Link>
           </Reveal>
         </div>
       </div>
-      <PupSpot className="absolute bottom-6 left-1/2 w-[64px] -translate-x-1/2 md:w-[80px]" />
+      <PupSpot className="absolute bottom-6 left-1/2 w-[clamp(64px,6vw,120px)] -translate-x-1/2" />
     </section>
   );
 }
@@ -61,9 +61,9 @@ function Signpost({ className }: { className?: string }) {
 
 export function Showroom() {
   return (
-    <div className="relative w-[250px]">
+    <div className="relative w-[clamp(250px,17vw,330px)]">
       {/* city skyline line drawing */}
-      <svg viewBox="0 0 300 120" className="absolute -bottom-2 left-[40%] w-[300px] text-cocoa" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <svg viewBox="0 0 300 120" className="absolute -bottom-2 left-[40%] w-[120%] text-cocoa" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
         <path d="M0 118h300M20 118V70h22v48M50 118V40h18v78M76 118V58l12-10 12 10v60M108 118V20l8-14 8 14v98M134 118V64h26v54M168 118V50h16v68M192 118V78h24v40M224 118V60h14v58M246 118V86h30v32" />
       </svg>
       {/* awning */}
@@ -81,7 +81,7 @@ export function Showroom() {
 
 export function FlightPath({ from = "Korea" }: { from?: string }) {
   return (
-    <div className="relative h-[220px] w-[300px]">
+    <div className="relative aspect-[300/220] w-[clamp(300px,32vw,620px)]">
       <svg viewBox="0 0 300 220" className="absolute inset-0 h-full w-full" fill="none" aria-hidden>
         <path d="M30 190C60 90 200 40 270 120" stroke="#2a170e" strokeWidth="2.2" strokeDasharray="3 8" strokeLinecap="round" />
         <circle cx="30" cy="190" r="5" fill="#a24a1a" />
@@ -89,14 +89,14 @@ export function FlightPath({ from = "Korea" }: { from?: string }) {
         <text x="30" y="212" textAnchor="middle" style={{ fontFamily: "var(--font-hand)", fontSize: 13, fill: "#2a170e" }}>{from}</text>
         <text x="270" y="142" textAnchor="middle" style={{ fontFamily: "var(--font-hand)", fontSize: 13, fill: "#2a170e" }}>Dubai</text>
       </svg>
-      <div className="absolute left-[30%] top-[4%] w-[190px]" style={{ animation: "tp-plane-bob 4s ease-in-out infinite" }}>
+      <div className="absolute left-[30%] top-[4%] w-[63%]" style={{ animation: "tp-plane-bob 4s ease-in-out infinite" }}>
         <svg viewBox="0 0 160 70" className="w-full" aria-hidden>
           <path d="M60 30 92 2h14L92 30M60 42l32 26h14L92 42" fill="#c2622b" stroke="#2a170e" strokeWidth="3" strokeLinejoin="round" />
           <path d="M8 26 2 10h10l14 16" fill="#c2622b" stroke="#2a170e" strokeWidth="3" strokeLinejoin="round" />
           <path d="M14 24h116c16 0 26 6 26 12s-10 12-26 12H24C14 48 8 42 8 36s2-12 6-12z" fill="#fffdf8" stroke="#2a170e" strokeWidth="3" />
           <path d="M140 30c6 0 10 3 10 6" stroke="#2a170e" strokeWidth="2.5" fill="none" />
         </svg>
-        <span className="absolute left-[40%] top-[30%] block h-[30px] w-[30px] overflow-hidden rounded-full border-[3px] border-cocoa">
+        <span className="absolute left-[40%] top-[30%] block aspect-square w-[16%] overflow-hidden rounded-full border-[3px] border-cocoa">
           <Image src={PLANE_PHOTO} alt="" fill sizes="40px" className="object-cover" />
         </span>
       </div>

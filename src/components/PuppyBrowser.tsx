@@ -66,9 +66,9 @@ export default function PuppyBrowser({ pups }: { pups: Puppy[] }) {
       </p>
 
       {shown.length ? (
-        <ul className="mt-8 grid grid-cols-1 gap-x-8 gap-y-14 min-[480px]:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-8 grid grid-cols-2 gap-x-[clamp(1.25rem,3vw,3.5rem)] gap-y-16 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {shown.map((p, i) => (
-            <li key={p.slug} className={i % 3 === 1 ? "lg:translate-y-12" : ""}>
+            <li key={p.slug} className={i % 2 ? "translate-y-[2.4rem]" : ""}>
               <PuppyCard pup={p} i={i} />
             </li>
           ))}

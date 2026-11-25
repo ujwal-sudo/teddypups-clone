@@ -12,7 +12,7 @@ export default function NightFaq() {
       <Stars count={18} />
       <div className="gutter relative grid gap-12 md:grid-cols-[minmax(0,360px)_1fr] md:gap-20">
         <div>
-          <h2 className="display text-[clamp(2.4rem,6vw,4.2rem)]">Questions, answered</h2>
+          <h2 className="display text-huge">Questions, answered</h2>
           <Link href="/faq" className="btn btn-ghost-light mt-7">Read all questions</Link>
           <div className="relative mt-10 w-[80px] md:w-[110px]">
             <span className="bubble float absolute -right-6 -top-4">?</span>
@@ -24,7 +24,7 @@ export default function NightFaq() {
             <Reveal as="li" key={f.q} delay={i * 120} className="flex gap-4">
               <Sparkle className="twinkle mt-1.5 h-4 w-4 shrink-0 text-honey" />
               <div>
-                <h3 className="display text-[1.3rem] leading-snug">{f.q}</h3>
+                <h3 className="display text-[clamp(1.4rem,2vw,1.95rem)] leading-snug">{f.q}</h3>
                 <p className="mt-2 text-milk/80">{f.a}</p>
               </div>
             </Reveal>

@@ -24,7 +24,7 @@ export function Sparkle({ className }: P) {
 export function Squiggle({ className }: P) {
   return (
     <svg viewBox="0 0 200 12" fill="none" className={className} aria-hidden preserveAspectRatio="none">
-      <path d="M2 7c12-6 22 4 34 0s22-6 34 0 22 4 34 0 22-6 34 0 22 4 34 0 16-4 26-1" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+      <path pathLength={1} d="M2 7c12-6 22 4 34 0s22-6 34 0 22 4 34 0 22-6 34 0 22 4 34 0 16-4 26-1" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
     </svg>
   );
 }

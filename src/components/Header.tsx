@@ -35,14 +35,23 @@ export default function Header() {
       </a>
       <div className="bg-milk">
         <div className="gutter flex h-[4.1rem] items-center justify-between gap-6 md:h-[4.5rem]">
-          <Link href="/" className="flex items-center gap-2.5" aria-label={`${SITE.name} home`}>
+          <Link
+            href="/"
+            className="relative z-[60] flex items-center gap-2.5"
+            aria-label={`${SITE.name} home`}
+            onClick={(e) => {
+              // already home: go back to the top instead of doing nothing
+              if (path === "/") { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+              setOpenOn(null);
+            }}
+          >
             <Image src="/brand/logo.png" alt="" width={48} height={48} priority className="h-11 w-11 rounded-full md:h-12 md:w-12" />
-            <span className="display text-xl md:hidden">TeddyPups</span>
+            <span className="display text-[clamp(1.15rem,1.4vw,1.4rem)] md:hidden xl:inline">TeddyPups</span>
           </Link>
 
           <nav aria-label="Main" className="hidden items-center gap-4 whitespace-nowrap md:flex lg:gap-8">
             {NAV.map((n) => (
-              <Link key={n.href} href={n.href} className="nav-link text-[0.85rem] lg:text-[0.94rem]" aria-current={isActive(n.href) ? "page" : undefined}>
+              <Link key={n.href} href={n.href} className="nav-link text-[0.85rem] lg:text-base" aria-current={isActive(n.href) ? "page" : undefined}>
                 {n.label}
               </Link>
             ))}

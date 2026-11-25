@@ -88,8 +88,8 @@ export default function MeetPups() {
       <div className={overflow ? "sticky top-0 flex h-screen flex-col overflow-hidden" : "pb-16"}>
         <header className="gutter flex flex-col items-start justify-between gap-5 pt-24 md:flex-row md:items-end md:pt-[calc(5.3rem+clamp(1rem,3vh,2.5rem))]">
           <div>
-            <h2 className="display text-[clamp(2.4rem,6vw,4.2rem)]">Meet the pups</h2>
-            <p className="mt-3 text-cocoa-soft">Real puppies, real photos, looking for their families right now.</p>
+            <h2 className="display text-huge">Meet the pups</h2>
+            <p className="mt-3 text-lede text-cocoa-soft">Real puppies, real photos, looking for their families right now.</p>
           </div>
           <Link href="/puppies" className="btn btn-primary">See all available puppies</Link>
         </header>

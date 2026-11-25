@@ -18,8 +18,8 @@ export default function FaqPage() {
     <section className="bg-gradient-to-b from-toffee-ink to-[#5e2e15] pb-24 pt-28 text-milk md:pt-36">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="gutter">
-        <h1 className="display text-[clamp(2.8rem,8vw,5.2rem)]">Questions &amp; answers</h1>
-        <p className="mt-4 max-w-xl text-milk/80">
+        <h1 className="display text-giant">Questions &amp; answers</h1>
+        <p className="mt-4 max-w-2xl text-lede text-milk/80">
           Can&apos;t find what you&apos;re looking for? Message us on WhatsApp — our team is available 24/7.
         </p>
         <div className="mt-12"><FaqBoard /></div>

@@ -63,7 +63,7 @@ export default function TwoWays() {
       <div key={way} id={`panel-${way}`} role="tabpanel" aria-labelledby={`tab-${way}`} className="msg mt-12">
         <div className="grid items-center gap-10 md:grid-cols-2">
           <div>
-            <h3 className="display text-[clamp(1.9rem,4vw,2.6rem)]">{w.title}</h3>
+            <h3 className="display text-[clamp(2rem,4vw,3.25rem)]">{w.title}</h3>
             {w.intro.map((p) => <p key={p} className="mt-4 text-cocoa-soft">{p}</p>)}
           </div>
           <div className="flex justify-center">

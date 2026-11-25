@@ -5,6 +5,8 @@ import Footer from "@/components/Footer";
 import MobileBar from "@/components/MobileBar";
 import Follower from "@/components/Follower";
 import CursorPrints from "@/components/CursorPrints";
+import Curtain from "@/components/Curtain";
+import AutoReveal from "@/components/AutoReveal";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -33,6 +35,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <MobileBar />
         <Follower />
         <CursorPrints />
+        <Curtain />
+        <AutoReveal />
       </body>
     </html>
   );

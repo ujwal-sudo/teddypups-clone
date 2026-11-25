@@ -36,10 +36,10 @@ export default function Journey() {
 
   return (
     <section className="relative bg-gradient-to-b from-[#f8d295] to-honey pb-24 pt-20 md:pt-28">
-      <div className="gutter grid gap-12 md:grid-cols-[1fr_minmax(300px,380px)] md:gap-16 lg:gap-24">
+      <div className="gutter grid gap-12 md:grid-cols-[1fr_minmax(300px,30rem)] md:gap-16 lg:gap-24">
         <div>
-          <h2 className="display max-w-[9ch] text-[clamp(2.4rem,6vw,4.2rem)]">Your puppy journey</h2>
-          <p className="mt-4 max-w-sm text-cocoa-soft">
+          <h2 className="display max-w-[9ch] text-huge">Your puppy journey</h2>
+          <p className="mt-4 max-w-md text-lede text-cocoa-soft">
             A premium, step-by-step concierge experience. We make adoption simple, secure, and purely joyful.
           </p>
           <ol className="mt-10 md:mt-16">
@@ -54,8 +54,8 @@ export default function Journey() {
                   {i + 1}
                 </span>
                 <div>
-                  <h3 className="display text-[1.55rem]">{s.title}</h3>
-                  <p className="mt-2 max-w-xs text-cocoa-soft">{s.text}</p>
+                  <h3 className="display text-[clamp(1.6rem,2.3vw,2.3rem)]">{s.title}</h3>
+                  <p className="mt-2 max-w-md text-cocoa-soft">{s.text}</p>
                 </div>
               </li>
             ))}
@@ -68,7 +68,7 @@ export default function Journey() {
         <div className="relative md:order-none">
           <div className="sticky top-28">
             <Phone step={step} />
-            <div className="absolute -bottom-4 -left-4 w-[70px] md:-left-16 md:w-[90px]">
+            <div className="absolute -bottom-4 -left-4 w-[70px] md:-left-20 md:w-[clamp(90px,8vw,150px)]">
               {step >= 1 && <span className="bubble msg absolute -top-7 left-6">ooh, photos!</span>}
               <PupSpot />
             </div>
@@ -81,7 +81,7 @@ export default function Journey() {
 
 function Phone({ step }: { step: number }) {
   return (
-    <div className="mx-auto w-full max-w-[340px] overflow-hidden rounded-[2.2rem] border-[3px] border-cocoa bg-milk p-2.5 shadow-[10px_12px_0_-2px_var(--color-cocoa)]">
+    <div className="mx-auto w-full max-w-[clamp(300px,20vw,385px)] overflow-hidden rounded-[2.2rem] border-[3px] border-cocoa bg-milk p-2.5 shadow-[10px_12px_0_-2px_var(--color-cocoa)]">
       <div className="flex items-center gap-3 rounded-t-[1.6rem] bg-milk px-3 py-2.5">
         <Image src="/brand/logo.png" alt="" width={36} height={36} className="h-9 w-9 rounded-full" />
         <div className="leading-tight">
@@ -89,7 +89,7 @@ function Phone({ step }: { step: number }) {
           <p className="text-[0.7rem] text-whatsapp">online</p>
         </div>
       </div>
-      <div className="chat-bg flex h-[400px] flex-col justify-end gap-2 overflow-hidden rounded-b-md p-3 text-[0.8rem] leading-snug md:h-[430px]">
+      <div className="chat-bg flex h-[clamp(400px,50vh,521px)] flex-col justify-end gap-2 overflow-hidden rounded-b-md p-3 text-[clamp(0.8rem,0.85vw,0.95rem)] leading-snug">
         <div key="m1" className="msg ml-auto max-w-[80%] rounded-xl rounded-br-sm border-2 border-cocoa bg-honey px-3 py-2">
           Hi TeddyPups! I&apos;d love to know more about your puppies.
         </div>
