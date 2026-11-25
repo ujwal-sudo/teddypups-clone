@@ -73,7 +73,7 @@ export default function TwoWays() {
                 <div className="mt-3 flex justify-center"><Showroom /></div>
               </div>
             ) : (
-              <FlightPath from="Europe · Korea" />
+              <FlightPath from="Europe · Korea" fly />
             )}
           </div>
         </div>
