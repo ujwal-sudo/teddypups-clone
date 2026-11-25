@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { FlightPath, Showroom } from "./home/Paths";
+import Pup from "./Pup";
+import { city, postcardPlane, postcardRoute, stepsImported, stepsLocal } from "./how/art";
 
 const WAYS = {
   local: {
@@ -36,57 +37,80 @@ const WAYS = {
 } as const;
 
 type Way = keyof typeof WAYS;
+const TINTS = ["#fbe3b4", "#fde6de", "#e3f0fb", "#e6f2df"];
 
-/** "Two ways home": a tab switch between the Dubai showroom flow and the import flow. */
+/** "Two ways home": a sliding switch between the Dubai showroom flow and the import flow. */
 export default function TwoWays() {
   const [way, setWay] = useState<Way>("local");
+  const keys = Object.keys(WAYS) as Way[];
   const w = WAYS[way];
+  const icons = way === "local" ? stepsLocal : stepsImported;
   return (
-    <div>
-      <div role="tablist" aria-label="Two ways home" className="inline-flex rounded-full border-[3px] border-cocoa bg-milk p-1">
-        {(Object.keys(WAYS) as Way[]).map((k) => (
-          <button
-            key={k}
-            role="tab"
-            id={`tab-${k}`}
-            aria-selected={way === k}
-            aria-controls={`panel-${k}`}
-            onClick={() => setWay(k)}
-            className={`rounded-full px-6 py-2 text-center leading-tight transition-colors md:px-9 ${way === k ? "bg-toffee-deep text-milk" : "hover:bg-honey-soft"}`}
-          >
-            <span className="display block text-[1.05rem]">{WAYS[k].tab}</span>
-            <span className="block text-[0.72rem] opacity-80">{WAYS[k].sub}</span>
-          </button>
-        ))}
+    <section className="tp-journeys" aria-labelledby="two-ways-title">
+      <div className="tp-journeys__top">
+        <div>
+          <p className="hand tp-journeys__kicker">choose your way</p>
+          <h2 id="two-ways-title" className="display text-big">Two ways home</h2>
+        </div>
+        <div className="tp-journeys__pick">
+          <div role="tablist" aria-label="Ways to bring your puppy home" className="tp-switch" style={{ "--at": keys.indexOf(way), "--n": keys.length } as React.CSSProperties}>
+            <span aria-hidden className="tp-switch__thumb" />
+            {keys.map((k) => (
+              <button
+                key={k}
+                type="button"
+                role="tab"
+                id={`tab-${k}`}
+                aria-selected={way === k}
+                aria-controls={`panel-${k}`}
+                onClick={() => setWay(k)}
+                className="tp-switch__tab"
+              >
+                <span className="display tp-switch__label">{WAYS[k].tab}</span>
+                <span className="tp-switch__hint">{WAYS[k].sub}</span>
+              </button>
+            ))}
+          </div>
+          <Pup className="tp-journeys__teddy" />
+        </div>
       </div>
 
-      <div key={way} id={`panel-${way}`} role="tabpanel" aria-labelledby={`tab-${way}`} className="msg mt-12">
-        <div className="grid items-center gap-10 md:grid-cols-2">
+      {/* keyed: switching remounts the panel, so the steps (and the plane) animate in again */}
+      <div key={way} id={`panel-${way}`} role="tabpanel" aria-labelledby={`tab-${way}`} className="tp-journey">
+        <div className="tp-journey__head">
           <div>
-            <h3 className="display text-[clamp(2rem,4vw,3.25rem)]">{w.title}</h3>
-            {w.intro.map((p) => <p key={p} className="mt-4 text-cocoa-soft">{p}</p>)}
+            <h3 className="display tp-journey__title">{w.title}</h3>
+            <p className="mt-4 text-lede text-cocoa-soft">{w.intro[0]}</p>
+            {w.intro[1] && <p className="hand mt-4 text-toffee-ink">{w.intro[1]}</p>}
           </div>
-          <div className="flex justify-center">
-            {way === "local" ? (
-              <div className="w-full max-w-sm rounded-2xl border-[3px] border-cocoa bg-honey-soft p-6">
-                <p className="hand text-toffee-ink">Downtown Dubai</p>
-                <div className="mt-3 flex justify-center"><Showroom /></div>
-              </div>
-            ) : (
-              <FlightPath from="Europe · Korea" fly />
-            )}
-          </div>
+          {way === "local" ? (
+            <div aria-hidden className="tp-postcard">
+              <span className="tp-postcard__sun" />
+              <svg viewBox="0 0 300 120" className="tp-postcard__city" dangerouslySetInnerHTML={{ __html: city }} />
+              <span className="hand tp-postcard__to tp-postcard__to--left">Downtown Dubai</span>
+            </div>
+          ) : (
+            <div aria-hidden className="tp-postcard tp-postcard--sky">
+              <svg viewBox="0 0 320 150" className="tp-postcard__route" preserveAspectRatio="none" dangerouslySetInnerHTML={{ __html: postcardRoute }} />
+              <svg viewBox="0 0 64 40" className="tp-postcard__plane" dangerouslySetInnerHTML={{ __html: postcardPlane }} />
+              <span className="hand tp-postcard__from">Europe · Korea</span>
+              <span className="hand tp-postcard__to">Dubai</span>
+            </div>
+          )}
         </div>
-        <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="tp-steps">
           {w.steps.map(([t, d], i) => (
-            <li key={t} className="rounded-2xl border-2 border-cocoa bg-milk p-5 shadow-[4px_5px_0_-1px_var(--color-cocoa)]">
-              <span className="hand text-sm text-toffee-ink">Step {i + 1}</span>
-              <h4 className="display mt-1 text-[1.25rem]">{t}</h4>
-              <p className="mt-2 text-[0.92rem] text-cocoa-soft">{d}</p>
+            <li key={t} className="tp-step" style={{ "--i": i, "--tint": TINTS[i] } as React.CSSProperties}>
+              <span aria-hidden className="tp-step__icon">
+                <svg viewBox="0 0 48 48" dangerouslySetInnerHTML={{ __html: icons[i] }} />
+              </span>
+              <span className="display tp-step__num">Step {i + 1}</span>
+              <h4 className="display-text tp-step__title">{t}</h4>
+              <p className="tp-step__text">{d}</p>
             </li>
           ))}
         </ol>
       </div>
-    </div>
+    </section>
   );
 }

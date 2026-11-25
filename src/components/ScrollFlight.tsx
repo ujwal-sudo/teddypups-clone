@@ -46,7 +46,7 @@ export default function ScrollFlight({ from = "Korea" }: { from?: string }) {
   const label = { fontFamily: "var(--font-hand)", fontSize: 19, fill: "var(--color-cocoa-soft)" };
   const line = { stroke: INK, strokeWidth: 4, strokeLinejoin: "round" as const };
   return (
-    <div ref={boxRef} className="relative aspect-[660/300] w-full">
+    <div ref={boxRef} className="absolute inset-0">
       <svg viewBox="0 0 660 300" className="absolute inset-0 h-full w-full overflow-visible" role="img" aria-label={`A plane flying puppies from ${from} to Dubai`}>
         <defs>
           <clipPath id={clip}><circle r="25" /></clipPath>

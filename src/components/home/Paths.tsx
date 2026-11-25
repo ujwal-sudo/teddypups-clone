@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { PupSpot } from "@/components/Follower";
 import Reveal from "@/components/Reveal";
-import PlaneFlyIn from "./PlaneFlyIn";
 
 const SHOWROOM_PHOTO = "/media/FHyoHcIosLZE/60f6e7e00a/27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg";
 const PLANE_PHOTO = "/media/gAaGwoGej2g6/5523e884dd/b942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg";
@@ -94,7 +93,7 @@ const PLANE = (
   </>
 );
 
-export function FlightPath({ from = "Korea", fly }: { from?: string; fly?: boolean }) {
+export function FlightPath({ from = "Korea" }: { from?: string }) {
   return (
     <div className="relative aspect-[300/220] w-[clamp(300px,32vw,620px)]">
       <svg viewBox="0 0 300 220" className="absolute inset-0 h-full w-full overflow-visible" fill="none" aria-hidden>
@@ -105,7 +104,7 @@ export function FlightPath({ from = "Korea", fly }: { from?: string; fly?: boole
         <text x="270" y="142" textAnchor="middle" style={{ fontFamily: "var(--font-hand)", fontSize: 13, fill: "#2a170e" }}>Dubai</text>
       </svg>
       <div className="absolute left-[30%] top-[4%] w-[63%]" style={{ animation: "tp-plane-bob 4s ease-in-out infinite" }}>
-        {fly ? <PlaneFlyIn>{PLANE}</PlaneFlyIn> : PLANE}
+        {PLANE}
       </div>
     </div>
   );
