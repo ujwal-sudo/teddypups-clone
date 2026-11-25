@@ -63,7 +63,11 @@ export default function AutoReveal() {
       // safety net: never leave content hidden if the curtain somehow never lifts
       if (++tries > 40) { clearInterval(retry); armed.splice(0).forEach((el) => io.observe(el)); }
     }, 250);
-    return () => { clearInterval(retry); io.disconnect(); idle.disconnect(); mo.disconnect(); watched.forEach((el) => el.removeAttribute("data-idle-watch")); };
+    return () => { clearInterval(retry); io.disconnect(); idle.disconnect(); mo.disconnect(); watched.forEach((el) => el.removeAttribute("data-idle-watch"));
+      // un-arm anything not yet revealed so the next run re-arms and actually observes it
+      // (otherwise a re-run, e.g. React's dev double-effect, leaves it hidden for good)
+      document.querySelectorAll("[data-armed]:not([data-revealed])").forEach((el) => el.removeAttribute("data-armed"));
+    };
   }, [path]);
   return null;
 }
