@@ -16,7 +16,7 @@ import { lenis } from "./SmoothScroll";
  *  - Once he arrives he is pinned exactly to the spot, so he scrolls with the page
  *    (and stays on the floor of the pinned "doors" section).
  *  - Legs move and paw prints are dropped only while he is actually moving across the page.
- *  - A `priority` spot (the footer basket) wins as soon as it is fully on screen; a `peek`
+ *  - A `priority` spot (the hero quilt, the footer basket) wins as soon as it is fully on screen; a `peek`
  *    spot shows him peeking out (head and paws over the rim) instead of sitting, and he hops
  *    up into it from behind the rim.
  *  - He only follows you on the home page (starting from the hero quilt). On other pages he
@@ -173,11 +173,14 @@ export default function Follower() {
         const ay = STIFFNESS * (t.y - pos.y) - DAMPING * vel.y;
         vel.x += ax * dt;
         vel.y += ay * dt;
+        // Heading home (hero quilt) or to bed (basket), he hurries and doesn't wait for you to stop.
+        const homing = (spot as HTMLElement).hasAttribute("data-priority");
+        const max = homing ? MAX_SPEED * 1.6 : MAX_SPEED;
         const v = Math.hypot(vel.x, vel.y);
-        if (v > MAX_SPEED) { vel.x *= MAX_SPEED / v; vel.y *= MAX_SPEED / v; }
-        // Never walk against the scroll: if the page carries his spot past him while you're still
-        // scrolling, he trots on the spot (facing forward) and catches up once you stop.
-        if ((scrolling > 0 && vel.y < 0) || (scrolling < 0 && vel.y > 0)) {
+        if (v > max) { vel.x *= max / v; vel.y *= max / v; }
+        // Otherwise never walk against the scroll: if the page carries his spot past him while
+        // you're still scrolling, he trots on the spot (facing forward) and catches up once you stop.
+        if (!homing && ((scrolling > 0 && vel.y < 0) || (scrolling < 0 && vel.y > 0))) {
           vel.y = 0;
           treadmill = true;
         }

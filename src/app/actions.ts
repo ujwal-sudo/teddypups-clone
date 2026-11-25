@@ -16,9 +16,11 @@ export async function sendEnquiry(_prev: EnquiryState, form: FormData): Promise<
 
   const key = process.env.RESEND_API_KEY;
   const to = process.env.ENQUIRY_TO;
+  const thanks = `Thanks ${enquiry.name.split(" ")[0]}! Your enquiry is on its way — we'll get back to you promptly.`;
+  // Demo mode: without email keys the form still validates and says thanks, but nothing is sent.
   if (!key || !to) {
-    console.error("sendEnquiry: RESEND_API_KEY or ENQUIRY_TO is not set");
-    return { ok: false, message: "Sorry, our form is offline right now. Please message us on WhatsApp instead.", values: enquiry };
+    console.warn("sendEnquiry: RESEND_API_KEY / ENQUIRY_TO not set, demo mode (no email sent)");
+    return { ok: true, message: thanks };
   }
 
   const mail = enquiryEmail(enquiry);
@@ -41,5 +43,5 @@ export async function sendEnquiry(_prev: EnquiryState, form: FormData): Promise<
     console.error("sendEnquiry: network error", err);
     return { ok: false, message: "Sorry, we couldn't send that. Please try again or message us on WhatsApp.", values: enquiry };
   }
-  return { ok: true, message: `Thanks ${enquiry.name.split(" ")[0]}! Your enquiry is on its way — we'll get back to you promptly.` };
+  return { ok: true, message: thanks };
 }

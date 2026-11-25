@@ -90,7 +90,7 @@ export default function Hero() {
           })}
         </ul>
         {/* Teddy's first spot: peeking over the middle of the quilt */}
-        <PupSpot pose="peek" className="hero-teddy" />
+        <PupSpot pose="peek" priority className="hero-teddy" />
         <div className="hero-quilt" aria-hidden>
           <svg className="block h-10 w-full" preserveAspectRatio="none" aria-hidden>
             <defs>

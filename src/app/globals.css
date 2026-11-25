@@ -444,7 +444,7 @@ a, button, [role="button"], label, select { cursor: url(/cursor/paw-press.svg) 9
   position: absolute;
   left: 50%;
   bottom: calc(var(--quilt-h) + 24px);
-  width: calc(var(--tw) * 0.6);
+  width: calc(var(--tw) * 0.5); /* a little smaller than the reference (requested) */
   translate: -50% 0;
 }
 .hero-quilt { position: absolute; inset-inline: 0; bottom: 0; z-index: 2; }
