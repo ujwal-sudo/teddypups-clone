@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { PupSpot } from "@/components/Follower";
 import Reveal from "@/components/Reveal";
+import ScrollFlight from "@/components/ScrollFlight";
 
 const SHOWROOM_PHOTO = "/media/FHyoHcIosLZE/60f6e7e00a/27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg";
-const PLANE_PHOTO = "/media/gAaGwoGej2g6/5523e884dd/b942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg";
 
 /** "Two ways to meet your puppy" — a signpost splitting into the Dubai showroom and the import route. */
 export default function Paths() {
@@ -79,33 +79,10 @@ export function Showroom() {
   );
 }
 
-const PLANE = (
-  <>
-    <svg viewBox="0 0 160 70" className="w-full" aria-hidden>
-      <path d="M60 30 92 2h14L92 30M60 42l32 26h14L92 42" fill="#c2622b" stroke="#2a170e" strokeWidth="3" strokeLinejoin="round" />
-      <path d="M8 26 2 10h10l14 16" fill="#c2622b" stroke="#2a170e" strokeWidth="3" strokeLinejoin="round" />
-      <path d="M14 24h116c16 0 26 6 26 12s-10 12-26 12H24C14 48 8 42 8 36s2-12 6-12z" fill="#fffdf8" stroke="#2a170e" strokeWidth="3" />
-      <path d="M140 30c6 0 10 3 10 6" stroke="#2a170e" strokeWidth="2.5" fill="none" />
-    </svg>
-    <span className="absolute left-[40%] top-[30%] block aspect-square w-[16%] overflow-hidden rounded-full border-[3px] border-cocoa">
-      <Image src={PLANE_PHOTO} alt="" fill sizes="40px" className="object-cover" />
-    </span>
-  </>
-);
-
 export function FlightPath({ from = "Korea" }: { from?: string }) {
   return (
-    <div className="relative aspect-[300/220] w-[clamp(300px,32vw,620px)]">
-      <svg viewBox="0 0 300 220" className="absolute inset-0 h-full w-full overflow-visible" fill="none" aria-hidden>
-        <path d="M30 190C60 90 200 40 270 120" stroke="#2a170e" strokeWidth="2.2" strokeDasharray="3 8" strokeLinecap="round" />
-        <circle cx="30" cy="190" r="5" fill="#a24a1a" />
-        <circle cx="270" cy="120" r="5" fill="#a24a1a" />
-        <text x="30" y="212" textAnchor="middle" style={{ fontFamily: "var(--font-hand)", fontSize: 13, fill: "#2a170e" }}>{from}</text>
-        <text x="270" y="142" textAnchor="middle" style={{ fontFamily: "var(--font-hand)", fontSize: 13, fill: "#2a170e" }}>Dubai</text>
-      </svg>
-      <div className="absolute left-[30%] top-[4%] w-[63%]" style={{ animation: "tp-plane-bob 4s ease-in-out infinite" }}>
-        {PLANE}
-      </div>
+    <div className="relative aspect-[660/300] w-[clamp(300px,32vw,620px)]">
+      <ScrollFlight from={from} />
     </div>
   );
 }

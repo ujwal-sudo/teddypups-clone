@@ -73,7 +73,7 @@ npm run build   # production build (54 static pages)
 | `ENQUIRY_TO` | Inbox(es) that receive enquiries (comma-separated) |
 | `ENQUIRY_FROM` | Optional sender on a verified domain. Without it, Resend's test sender is used, which only delivers to your own Resend account's email |
 
-Without these variables the forms still validate, but they tell the visitor to use WhatsApp instead of sending.
+**Email sending is off in the deployed demo.** Without these variables the forms still validate and show the thank-you message, but no email is sent (demo mode). Set them to turn real sending on, no code change needed.
 
 ## Implementation notes
 
