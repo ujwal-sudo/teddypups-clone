@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NAV, SITE } from "@/lib/site";
 import { PawIcon } from "./icons";
+import { lenis, scrollToTop } from "./SmoothScroll";
 
 export default function Header() {
   const path = usePathname();
@@ -22,9 +23,11 @@ export default function Header() {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpenOn(null);
     document.addEventListener("keydown", onKey);
     document.documentElement.style.overflow = "hidden";
+    lenis?.stop();
     return () => {
       document.removeEventListener("keydown", onKey);
       document.documentElement.style.overflow = "";
+      lenis?.start();
     };
   }, [open]);
 
@@ -41,7 +44,7 @@ export default function Header() {
             aria-label={`${SITE.name} home`}
             onClick={(e) => {
               // already home: go back to the top instead of doing nothing
-              if (path === "/") { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+              if (path === "/") { e.preventDefault(); scrollToTop(true); }
               setOpenOn(null);
             }}
           >

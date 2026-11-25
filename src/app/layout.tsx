@@ -7,6 +7,7 @@ import Follower from "@/components/Follower";
 import CursorPrints from "@/components/CursorPrints";
 import Curtain from "@/components/Curtain";
 import AutoReveal from "@/components/AutoReveal";
+import SmoothScroll from "@/components/SmoothScroll";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <CursorPrints />
         <Curtain />
         <AutoReveal />
+        <SmoothScroll />
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import Pup from "./Pup";
 import PupWalker from "./PupWalker";
+import { lenis } from "./SmoothScroll";
 
 /**
  * One Teddy for the whole site. Sections mark where he likes to sit with <PupSpot />.
@@ -180,8 +181,10 @@ export default function Follower() {
       if (walking) lastStep = now;
       // stay in the walking pose briefly after the last step so it doesn't flicker
       const showWalk = !reduced && now - lastStep < 180;
-      if (Math.abs(dx) > 0.8) {
-        const left = dx < 0;
+      // Face left only when he's clearly heading left. Moving mostly down the page (following
+      // the scroll, or trotting on the pinned doors floor) he faces forward, towards the doors.
+      if (moved > 0.3) {
+        const left = dx < -0.8 && -dx > Math.abs(dy) * 0.35;
         if (left !== facingLeft) { facingLeft = left; body.style.scale = left ? "-1 1" : ""; }
       }
       body.classList.toggle("is-walking", showWalk);
@@ -198,10 +201,11 @@ export default function Follower() {
         if (travelled >= PRINT_EVERY) { travelled = 0; dropPrint(dx, dy); }
       }
 
-      // render in viewport space
+      // Render in page space (he's absolutely positioned in the document), so while he sits on a
+      // spot the browser scrolls him with the content: no lag or jump on fast scrolls.
       dog.style.width = `${pos.w}px`;
       dog.style.height = `${pos.h}px`;
-      dog.style.transform = `translate3d(${pos.x - scrollX}px, ${pos.y - scrollY}px, 0)`;
+      dog.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
 
       if (showWalk || !arrived) idleSince = now;
       // keep animating while moving; stop shortly after he settles (restarted by scroll/resize)
@@ -209,8 +213,12 @@ export default function Follower() {
       else { last = 0; body.classList.remove("is-walking"); }
     };
 
+    // Lenis moves the page inside its own animation frame; step right after it so the dog
+    // (and his screen-edge / pinned-section targets) never lag a frame behind the scroll.
+    let unsub: (() => void) | undefined;
     const wake = () => {
       idleSince = performance.now();
+      if (!unsub && lenis) unsub = lenis.on("scroll", () => { cancelAnimationFrame(raf); frame(performance.now()); });
       if (!raf) raf = requestAnimationFrame(frame);
     };
     wake();
@@ -222,6 +230,7 @@ export default function Follower() {
       window.removeEventListener("scroll", wake);
       window.removeEventListener("resize", wake);
       mo.disconnect();
+      unsub?.();
       cancelAnimationFrame(raf);
     };
   }, []);
@@ -232,7 +241,7 @@ export default function Follower() {
       <div
         ref={dogRef}
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-30 opacity-0 transition-opacity duration-300 will-change-transform"
+        className="pointer-events-none absolute left-0 top-0 z-30 opacity-0 transition-opacity duration-300 will-change-transform"
         style={{ width: 80 }}
       >
         <div className="follower relative">

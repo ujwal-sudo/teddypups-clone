@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import PupWalker from "./PupWalker";
 import { PawIcon } from "./icons";
+import { scrollToTop } from "./SmoothScroll";
 
 type State = "intro" | "idle" | "covering" | "covered" | "lifting";
 
@@ -49,7 +50,7 @@ export default function Curtain() {
   useEffect(() => {
     if (!pending.current) return;
     pending.current = null;
-    window.scrollTo({ top: 0, behavior: "instant" });
+    scrollToTop(false);
     const t1 = setTimeout(() => setState("lifting"), 120);
     const t2 = setTimeout(() => setState("idle"), 120 + 480);
     return () => { clearTimeout(t1); clearTimeout(t2); };
