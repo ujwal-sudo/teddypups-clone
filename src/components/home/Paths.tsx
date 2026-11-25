@@ -81,7 +81,7 @@ export function Showroom() {
 
 export function FlightPath({ from = "Korea" }: { from?: string }) {
   return (
-    <div className="relative aspect-[660/300] w-[clamp(300px,32vw,620px)]">
+    <div className="relative aspect-[660/300] w-full max-w-[620px] md:w-[clamp(300px,32vw,620px)]">
       <ScrollFlight from={from} />
     </div>
   );

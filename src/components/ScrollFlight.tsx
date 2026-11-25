@@ -43,7 +43,7 @@ export default function ScrollFlight({ from = "Korea" }: { from?: string }) {
     };
   }, []);
 
-  const label = { fontFamily: "var(--font-hand)", fontSize: 19, fill: "var(--color-cocoa-soft)" };
+  const label = { fontFamily: "var(--font-hand)", fontSize: 24, fill: "var(--color-cocoa-soft)" };
   const line = { stroke: INK, strokeWidth: 4, strokeLinejoin: "round" as const };
   return (
     <div ref={boxRef} className="absolute inset-0">
