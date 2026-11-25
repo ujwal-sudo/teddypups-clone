@@ -28,6 +28,13 @@ export default function AutoReveal() {
     // Hide right away, but only start revealing once the loading curtain is gone; otherwise
     // whatever is on screen when a page opens animates unseen underneath it.
     const armed: Element[] = [];
+    // Looping decorations (Teddy's blinks and wags, stars, flags) cost a style + SVG layout pass every
+    // frame even off screen, which made scrolling stutter: pause every section (and any Teddy) while it's out of view.
+    const idle = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.target.toggleAttribute("data-offscreen", !e.isIntersecting)),
+      { rootMargin: "100px" },
+    );
+    const watched: Element[] = []; // un-marked on cleanup so the next page's observer re-watches the footer
     const curtainUp = () => (document.querySelector(".curtain") as HTMLElement | null)?.dataset.state !== "idle";
     const arm = () => {
       let waiting = 0;
@@ -35,6 +42,13 @@ export default function AutoReveal() {
         if (!hydrated(el)) return void waiting++;
         el.setAttribute("data-armed", "");
         armed.push(el);
+      });
+      document.querySelectorAll("section, footer, .pup-eyes").forEach((el) => {
+        const root = el.classList.contains("pup-eyes") ? el.closest("svg")! : el;
+        if (root.hasAttribute("data-idle-watch") || !hydrated(root)) return;
+        root.setAttribute("data-idle-watch", "");
+        watched.push(root);
+        idle.observe(root);
       });
       if (curtainUp()) return waiting + armed.length;
       armed.splice(0).forEach((el) => io.observe(el));
@@ -49,7 +63,7 @@ export default function AutoReveal() {
       // safety net: never leave content hidden if the curtain somehow never lifts
       if (++tries > 40) { clearInterval(retry); armed.splice(0).forEach((el) => io.observe(el)); }
     }, 250);
-    return () => { clearInterval(retry); io.disconnect(); mo.disconnect(); };
+    return () => { clearInterval(retry); io.disconnect(); idle.disconnect(); mo.disconnect(); watched.forEach((el) => el.removeAttribute("data-idle-watch")); };
   }, [path]);
   return null;
 }

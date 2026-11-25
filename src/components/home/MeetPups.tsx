@@ -45,29 +45,38 @@ export default function MeetPups() {
       }
       setOverflow(mq.matches ? Math.max(0, track.scrollWidth - window.innerWidth) : 0);
     };
+    // Geometry is measured once per resize, not per frame: reading layout every scroll frame
+    // (after the dog has moved) forced extra style + layout passes and made scrolling stutter.
+    let tx = 0;
+    let geo: { top: number; max: number; span: number; nose: number; doors: number[] } | null = null;
+    const measureGeo = () => {
+      geo = mq.matches ? {
+        top: section.getBoundingClientRect().top + window.scrollY,
+        max: Math.max(1, section.offsetHeight - window.innerHeight),
+        span: track.scrollWidth - window.innerWidth,
+        nose: spotRef.current?.getBoundingClientRect().right ?? 0,
+        doors: [...track.querySelectorAll(".door")].map((d) => d.getBoundingClientRect().left - tx),
+      } : null;
+    };
     const onScroll = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        if (!mq.matches) return;
-        const max = section.offsetHeight - window.innerHeight;
-        const p = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / Math.max(1, max)));
-        const tx = -p * (track.scrollWidth - window.innerWidth);
+        if (!geo) return;
+        const p = Math.min(1, Math.max(0, (window.scrollY - geo.top) / geo.max));
+        tx = -p * geo.span;
         track.style.transform = `translate3d(${tx}px,0,0)`;
         floorRef.current?.style.setProperty("--floor-x", `${tx}px`); // planks slide with the doors
         // a door opens once its left edge slides up to Teddy's nose
-        const nose = spotRef.current?.getBoundingClientRect().right ?? 0;
-        const doors = track.querySelectorAll(".door");
-        let n = 0;
-        doors.forEach((d) => { if (d.getBoundingClientRect().left < nose + 8) n++; });
-        setReached(n);
+        setReached(geo.doors.filter((l) => l + tx < geo!.nose + 8).length);
       });
     };
 
-    measure();
-    onScroll();
-    const ro = new ResizeObserver(() => { measure(); onScroll(); });
+    const remeasure = () => { measure(); measureGeo(); onScroll(); };
+    remeasure();
+    const ro = new ResizeObserver(remeasure);
     ro.observe(track);
     ro.observe(hall);
+    ro.observe(document.body); // content above (images, fonts) can move the section down
     mq.addEventListener("change", measure);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {

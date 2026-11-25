@@ -135,7 +135,10 @@ export default function Follower() {
       if (next !== spot) {
         if (!next) {
           dog.style.opacity = "0";
+          dog.setAttribute("data-offscreen", ""); // pauses his blinks and wags while hidden
           shown = false;
+          walkPose = false; // or his legs keep trotting (and costing frames) while he's hidden
+          body.classList.remove("is-walking");
         }
         spot = next;
         arrived = false;
@@ -159,6 +162,7 @@ export default function Follower() {
         arrived = true;
         shown = true;
         dog.style.opacity = "1";
+        dog.removeAttribute("data-offscreen");
       } else if (arrived || reduced) {
         // Pinned to the spot: he rides along with the page. If the spot stays put on screen
         // while the page scrolls (the pinned doors floor, or the screen edge while he follows
@@ -227,8 +231,10 @@ export default function Follower() {
 
       // Render in page space (he's absolutely positioned in the document), so while he sits on a
       // spot the browser scrolls him with the content: no lag behind fast scrolls.
-      dog.style.width = `${pos.w}px`;
-      dog.style.height = `${pos.h}px`;
+      // rounded so the easing tail doesn't relayout him every frame for sub-pixel changes
+      const w = `${Math.round(pos.w * 10) / 10}px`, h = `${Math.round(pos.h * 10) / 10}px`; // same form the browser reads back
+      if (dog.style.width !== w) dog.style.width = w;
+      if (dog.style.height !== h) dog.style.height = h;
       dog.style.transform = `translate3d(${pos.x + scrollX}px, ${pos.y + scrollY}px, 0)`;
 
       if (showWalk || !arrived) idleSince = now;
@@ -265,6 +271,7 @@ export default function Follower() {
       <div
         ref={dogRef}
         aria-hidden
+        data-offscreen="" // hidden (and his loops paused) until he has a spot
         className="pointer-events-none absolute left-0 top-0 z-30 opacity-0 transition-opacity duration-300 will-change-transform"
         style={{ width: 80 }}
       >

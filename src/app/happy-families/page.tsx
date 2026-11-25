@@ -46,8 +46,8 @@ export default function HappyFamiliesPage() {
                 <Image
                   src={f.src}
                   alt="A happy TeddyPups family with their new puppy"
-                  width={400}
-                  height={500}
+                  width={f.w} // real sizes, so the wall doesn't reflow as photos load mid-scroll
+                  height={f.h}
                   sizes="(min-width:1024px) 270px, (min-width:768px) 30vw, 45vw"
                   className="h-auto w-full"
                 />

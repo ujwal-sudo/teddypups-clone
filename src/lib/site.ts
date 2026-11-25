@@ -44,7 +44,7 @@ export type Puppy = {
 export const puppies = puppiesJson as Puppy[];
 export const available = puppies.filter((p) => p.status === "available");
 export const goneHome = puppies.filter((p) => p.status === "gone");
-export const families = familiesJson as { src: string; caption: string }[];
+export const families = familiesJson as { src: string; caption: string; w: number; h: number }[];
 
 /** "Maltipoo, boy, 3 months, with video" — the short line shown under a puppy's name. */
 export function puppyLine(p: Puppy, sep = ", ") {
