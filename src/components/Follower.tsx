@@ -64,7 +64,6 @@ export default function Follower() {
     let scrollDir = 0; // direction of the latest scroll step, and when it happened
     let scrollAt = -1e9;
     const vel = { x: 0, y: 0 };
-    let speed = 0; // smoothed page-space speed (px/s)
     let facingLeft = false;
     let travelled = 0;
     let stepSide = 1;
@@ -72,6 +71,8 @@ export default function Follower() {
     let last = 0;
     let idleSince = 0;
     let lastStep = -1e9;
+    let walkPose = false; // pose on screen, held for a moment so it never flickers
+    let poseAt = -1e9;
 
     const isMobile = () => window.innerWidth < 768;
     const onScreen = (r: DOMRect) => r.width > 0 && r.bottom > 70 && r.top < window.innerHeight;
@@ -162,7 +163,7 @@ export default function Follower() {
         // Pinned to the spot: he rides along with the page. If the spot stays put on screen
         // while the page scrolls (the pinned doors floor, or the screen edge while he follows
         // you), he trots on the spot instead.
-        treadmill = arrived && Math.abs(scrolled) > 0.5 && Math.hypot(t.x - prev.x, t.y - prev.y) < 0.5;
+        treadmill = arrived && scrolling !== 0 && Math.hypot(t.x - prev.x, t.y - prev.y) < 0.5;
         Object.assign(pos, t);
         prev.x = pos.x; prev.y = pos.y; // being carried by the page is not walking
       } else {
@@ -184,19 +185,21 @@ export default function Follower() {
         pos.y += vel.y * dt;
         pos.w += (t.w - pos.w) * Math.min(1, dt * 6);
         pos.h += (t.h - pos.h) * Math.min(1, dt * 6);
-        if (Math.hypot(t.x - pos.x, t.y - pos.y) < 1.5 && Math.hypot(vel.x, vel.y) < 25) arrived = true;
+        if (Math.hypot(t.x - pos.x, t.y - pos.y) < 3 && Math.hypot(vel.x, vel.y) < 60) { Object.assign(pos, t); arrived = true; }
       }
 
       // his own movement on screen drives legs, facing and paw prints
       const dx = pos.x - prev.x, dy = pos.y - prev.y;
       const moved = Math.hypot(dx, dy);
-      speed += (moved / Math.max(dt, 0.001) - speed) * 0.25;
-      const walking = (moved > 0.3 && speed > 40) || treadmill;
+      // on his way to a spot he's walking the whole time (even while easing in at the end)
+      const walking = (!arrived && moved > 0.05) || treadmill;
       if (walking) lastStep = now;
       // stay in the walking pose briefly after the last step so it doesn't flicker
       // ...but never while the page is carrying him: that reads as walking backwards
       const carried = arrived && !treadmill && scrolling !== 0;
-      const showWalk = !reduced && (walking || (!carried && now - lastStep < 180));
+      const wantWalk = !reduced && (walking || (!carried && now - lastStep < 180));
+      if (wantWalk !== walkPose && now - poseAt > 250) { walkPose = wantWalk; poseAt = now; }
+      const showWalk = walkPose;
       // Face the way he's going on screen; going straight up/down (or trotting on the spot) he
       // faces forward, to the right, towards the doors.
       if (walking) {
@@ -228,7 +231,7 @@ export default function Follower() {
       if (showWalk || !arrived) idleSince = now;
       // keep animating while moving; stop shortly after he settles (restarted by scroll/resize)
       if (now - idleSince < 250) raf = requestAnimationFrame(frame);
-      else { last = 0; body.classList.remove("is-walking"); }
+      else { last = 0; walkPose = false; body.classList.remove("is-walking"); }
     };
 
     // Lenis moves the page inside its own animation frame; step right after it so the dog
