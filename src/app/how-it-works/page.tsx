@@ -3,7 +3,7 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import TwoWays from "@/components/TwoWays";
 import { PupSpot } from "@/components/Follower";
-import { FlightPath } from "@/components/home/Paths";
+import ScrollFlight from "@/components/ScrollFlight";
 import { Stamp } from "@/components/home/Passport";
 import { SITE } from "@/lib/site";
 
@@ -77,7 +77,7 @@ export default function HowItWorksPage() {
       </section>
 
       <section id="delivery" className="gutter scroll-mt-28 py-12">
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div>
             <h2 className="display max-w-[10ch] text-big">Delivery &amp; collection</h2>
             <p className="mt-4 max-w-xl text-lede text-cocoa-soft">
@@ -92,8 +92,8 @@ export default function HowItWorksPage() {
               ))}
             </ul>
           </div>
-          <div className="relative flex justify-center">
-            <FlightPath />
+          <div className="relative">
+            <ScrollFlight />
           </div>
         </div>
       </section>
